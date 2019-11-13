@@ -1,6 +1,5 @@
 import numpy as np
 from copy import deepcopy as deep_copy
-import pandas as pd
 
 
 def rafael_bambirra_pso(nvar, ncal, type, function, chi, w):
@@ -171,97 +170,26 @@ def rafael_bambirra_pso(nvar, ncal, type, function, chi, w):
 
     p = PSO()
 
-    # print('========== Parameters of PSO ===========')
-    # print('dimension = ' + str(prob.dimension))
-    # print('n_cal = ' + str(prob.n_cal))
-    # print('pop size = ' + str(prob.swarm_size))
-    # print('chi = ' + str(prob.chi))
-    # print('weight inertia = ' + str(prob.w))
-    # print('type_PSO = ' + prob.type_PSO)
-    # print('function = ' + str(prob.function))
-    # print('================ BEST ==================')
+    print('========== Parameters of PSO ===========')
+    print('dimension = ' + str(prob.dimension))
+    print('n_cal = ' + str(prob.n_cal))
+    print('pop size = ' + str(prob.swarm_size))
+    print('chi = ' + str(prob.chi))
+    print('weight inertia = ' + str(prob.w))
+    print('type_PSO = ' + prob.type_PSO)
+    print('function = ' + str(prob.function))
+    print('================ BEST ==================')
     if prob.type_PSO == 'Global':
-        # print('global best =' + str(p.global_best))
-        # print('and its position = ' + str(p.global_best_pos))
+        print('global best =' + str(p.global_best))
+        print('and its position = ' + str(p.global_best_pos))
         gbest = p.global_best
         gbest_position = p.global_best_pos
     elif prob.type_PSO == 'Local':
-        # print('global best =' + str(np.min(p.global_best)))
-        # print('and its position = ' + str(p.global_best_pos[np.argmin(p.global_best)]))
+        print('global best =' + str(np.min(p.global_best)))
+        print('and its position = ' + str(p.global_best_pos[np.argmin(p.global_best)]))
         gbest = np.min(p.global_best)
         gbest_position = p.global_best_pos[np.argmin(p.global_best)]
     return gbest, gbest_position
 
 
 f, x = rafael_bambirra_pso(nvar=10, ncal=100000, type='Global', function='Rastrigin', chi=0.9, w=0.9)
-
-'''
-# definir parametros chi e w
-valores = [0.6, 0.7, 0.8, 0.9]
-matrix_global = []
-matrix_local = []
-for i in range(len(valores)):
-    aux_global = []
-    aux_local = []
-    for k in range(31):
-        f, x = rafael_bambirra_pso(nvar=5, ncal=10000, type='Global', function='Rastrigin', chi=valores[i],
-                                   w=valores[i])
-        aux_global.append(f)
-        f, x = rafael_bambirra_pso(nvar=5, ncal=10000, type='Local', function='Rastrigin', chi=valores[i],
-                                   w=valores[i])
-        aux_local.append(f)
-    matrix_global.append(np.mean(aux_global))
-    matrix_local.append(np.mean(aux_local))
-    print(str(i)+' -- ')
-df1 = pd.DataFrame(matrix_global)
-df2 = pd.DataFrame(matrix_local)
-df1.to_excel('matrTestCoefGlobal.xlsx', sheet_name='global')
-df2.to_excel('matrTestCoefLocal.xlsx', sheet_name='Local')
-'''
-'''
-# construir tabela de resultados
-resultados_Local = np.zeros([2, 4, 31])
-resultados_Global = np.zeros([2, 4, 31])
-tabela_esfera = []
-tabela_rastrigin = []
-for lin in range(4):
-    if lin == 0:
-        chi = 1
-        w = 1
-    elif lin == 1:
-        chi = 1
-        w = 0.9
-    elif lin == 2:
-        chi = 0.9
-        w = 1
-    elif lin == 3:
-        chi = 0.9
-        w = 0.9
-    for run in range(31):
-        result = rafael_bambirra_pso(nvar=10, ncal=100000, type='Global', function='Sphere', chi=chi, w=w)
-        resultados_Global[0, lin, run] = result[0]
-        result = rafael_bambirra_pso(nvar=10, ncal=100000, type='Global', function='Rastrigin', chi=chi, w=w)
-        resultados_Global[1, lin, run] = result[0]
-        result = rafael_bambirra_pso(nvar=10, ncal=100000, type='Local', function='Sphere', chi=chi, w=w)
-        resultados_Local[0, lin, run] = result[0]
-        result = rafael_bambirra_pso(nvar=10, ncal=100000, type='Local', function='Rastrigin', chi=chi, w=w)
-        resultados_Local[1, lin, run] = result[0]
-        print('Linha = ' + str(lin) + ' / 3' + '   |   Execução = ' + str(run) + ' / 30')
-    tabela_esfera.append((np.mean(resultados_Local[0, lin, :]), np.std(resultados_Local[0, lin, :])))
-    tabela_esfera.append((np.mean(resultados_Global[0, lin, :]), np.std(resultados_Global[0, lin, :])))
-    tabela_rastrigin.append((np.mean(resultados_Local[1, lin, :]), np.std(resultados_Local[1, lin, :])))
-    tabela_rastrigin.append((np.mean(resultados_Global[1, lin, :]), np.std(resultados_Global[1, lin, :])))
-resp_esfera = np.reshape(tabela_esfera, (4, -1))
-resp_rastrigin = np.reshape(tabela_rastrigin, (4, -1))
-print('======== Tabela PSO para função esfera =========')
-print('         Local      |      Global')
-print(str(resp_esfera))
-print('======== Tabela PSO para função Rastrigin =========')
-print('         Local      |      Global')
-print(str(resp_rastrigin))
-
-df1 = pd.DataFrame(resp_esfera)
-df1.to_excel('tabela esfera run 2.xlsx', sheet_name='esfera')
-df2 = pd.DataFrame(resp_rastrigin)
-df2.to_excel('tabela rastrigin run 2.xlsx', sheet_name='rastrigin')
-'''
